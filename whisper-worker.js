@@ -6,7 +6,8 @@ env.backends.onnx.wasm.wasmPaths = new URL("./tf/", import.meta.url).href;
 const q = new URL(self.location.href).searchParams;
 if (q.get("asr")) { env.allowRemoteModels = false; env.allowLocalModels = true; env.localModelPath = q.get("asr"); }
 const MODEL = q.get("asrModel") || "Xenova/whisper-tiny";
-const OPTS = MODEL.endsWith(".en") ? {} : { language: "english", task: "transcribe" };
+// short phrases only: a low token cap also stops the rare endless "Good. Good. Good…" loop early
+const OPTS = { max_new_tokens: 48, ...(MODEL.endsWith(".en") ? {} : { language: "english", task: "transcribe" }) };
 
 let asr = null;
 const load = () => (asr = asr || pipeline("automatic-speech-recognition", MODEL, {
