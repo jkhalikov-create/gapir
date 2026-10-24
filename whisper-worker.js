@@ -3,7 +3,8 @@ import { pipeline, env } from "./tf/transformers.min.js";
 
 env.backends.onnx.wasm.wasmPaths = new URL("./tf/", import.meta.url).href;
 // ?asr=<dir>&asrModel=<id> serves the model from this site instead of huggingface.co (used for local tests)
-const q = new URL(self.location.href).searchParams;
+// the override is honoured on localhost only, so a shared link cannot point the model at another host
+const q = /^(localhost|127\.0\.0\.1)$/.test(self.location.hostname) ? new URL(self.location.href).searchParams : new URLSearchParams();
 if (q.get("asr")) { env.allowRemoteModels = false; env.allowLocalModels = true; env.localModelPath = q.get("asr"); }
 const MODEL = q.get("asrModel") || "Xenova/whisper-tiny";
 // short phrases only: a low token cap also stops the rare endless "Good. Good. Good…" loop early
