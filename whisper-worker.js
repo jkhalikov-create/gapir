@@ -6,7 +6,7 @@ env.backends.onnx.wasm.wasmPaths = new URL("./tf/", import.meta.url).href;
 // the override is honoured on localhost only, so a shared link cannot point the model at another host
 const q = /^(localhost|127\.0\.0\.1)$/.test(self.location.hostname) ? new URL(self.location.href).searchParams : new URLSearchParams();
 if (q.get("asr")) { env.allowRemoteModels = false; env.allowLocalModels = true; env.localModelPath = q.get("asr"); }
-const MODEL = q.get("asrModel") || "Xenova/whisper-tiny";
+const MODEL = q.get("asrModel") || "Xenova/whisper-base";
 // short phrases only: a low token cap also stops the rare endless "Good. Good. Good…" loop early
 const OPTS = { max_new_tokens: 48, ...(MODEL.endsWith(".en") ? {} : { language: "english", task: "transcribe" }) };
 
